@@ -3,131 +3,126 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Image))]
-public class SeamlessHotspot : MonoBehaviour, IPointerClickHandler
+public class SimpleHotspot : MonoBehaviour, IPointerClickHandler
 {
-    [Header("Panel References")]
-    [Tooltip("The panel this hotspot is on (e.g. Desk)")]
-    public ZoomablePanel myPanel;
-
-    [Tooltip("The panel to transition to - MUST BE A CHILD of this hotspot!")]
-    public ZoomablePanel targetPanel;
+    [Header("References")]
+    public ZoomablePanel myPanel;           // The panel this hotspot is on (GameDevDeskIntro)
+    public RectTransform zoomTarget;        // What to zoom into (Mars RectTransform)
+    public ZoomablePanel targetPanel;       // The panel to switch to after zoom (Mars ZoomablePanel)
 
     [Header("Settings")]
-    [Tooltip("Minimum zoom required to activate (0 = always active)")]
-    public float requiredZoom = 0f;
+    public float doubleClickThreshold = 0.35f;
+    public float zoomDuration = 1.0f;
 
-    [Tooltip("Time window for double-click detection")]
-    public float doubleClickThreshold = 0.3f;
-
-    RectTransform rect;
-    Mask mask;
-    Image image;
     float lastClickTime = 0f;
+
+    // Cached values calculated at Start
+    Vector2 cachedTargetCenter;
+    float cachedScaleToFill;
+
+    // Store original Mars transform for zoom out
+    Vector2 originalMarsAnchorMin;
+    Vector2 originalMarsAnchorMax;
+    Vector2 originalMarsOffsetMin;
+    Vector2 originalMarsOffsetMax;
+    Vector3 originalMarsScale;
+    Vector2 originalMarsAnchoredPos;
 
     void Awake()
     {
-        rect = GetComponent<RectTransform>();
-        image = GetComponent<Image>();
-
-        mask = GetComponent<Mask>();
-        if (mask == null)
-        {
-            mask = gameObject.AddComponent<Mask>();
-        }
-
-        mask.showMaskGraphic = true;
+        Image img = GetComponent<Image>();
+        if (img != null) img.raycastTarget = true;
     }
 
     void Start()
     {
-        ValidateSetup();
+        // Cache these values at start when hierarchy is correct
+        cachedTargetCenter = CalculateTargetCenterInPanel();
+        cachedScaleToFill = CalculateScaleToFillScreen();
+
+        // Store original Mars transform
+        if (zoomTarget != null)
+        {
+            originalMarsAnchorMin = zoomTarget.anchorMin;
+            originalMarsAnchorMax = zoomTarget.anchorMax;
+            originalMarsOffsetMin = zoomTarget.offsetMin;
+            originalMarsOffsetMax = zoomTarget.offsetMax;
+            originalMarsScale = zoomTarget.localScale;
+            originalMarsAnchoredPos = zoomTarget.anchoredPosition;
+        }
+
+        Debug.Log("SimpleHotspot cached - Center: " + cachedTargetCenter + ", Scale: " + cachedScaleToFill);
     }
 
-    void ValidateSetup()
+    public void RestoreMarsTransform()
     {
-        if (targetPanel == null)
+        if (zoomTarget != null)
         {
-            Debug.LogError("SeamlessHotspot '" + gameObject.name + "': targetPanel is NULL!");
-            return;
-        }
-
-        if (myPanel == null)
-        {
-            Debug.LogError("SeamlessHotspot '" + gameObject.name + "': myPanel is NULL!");
-            return;
-        }
-
-        if (targetPanel.transform.parent != transform)
-        {
-            Debug.LogError("SeamlessHotspot '" + gameObject.name + "': targetPanel '" + targetPanel.name + "' is NOT a child of this hotspot!");
-        }
-
-        if (!targetPanel.gameObject.activeSelf)
-        {
-            targetPanel.gameObject.SetActive(true);
-        }
-
-        if (image != null && !image.raycastTarget)
-        {
-            image.raycastTarget = true;
+            zoomTarget.anchorMin = originalMarsAnchorMin;
+            zoomTarget.anchorMax = originalMarsAnchorMax;
+            zoomTarget.offsetMin = originalMarsOffsetMin;
+            zoomTarget.offsetMax = originalMarsOffsetMax;
+            zoomTarget.localScale = originalMarsScale;
+            zoomTarget.anchoredPosition = originalMarsAnchoredPos;
         }
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("=== CLICK RECEIVED on " + gameObject.name + " ===");
+        if (eventData.button != PointerEventData.InputButton.Left) return;
+        if (PanelManager.Instance == null || myPanel == null || zoomTarget == null || targetPanel == null) return;
+        if (PanelManager.Instance.currentPanel != myPanel) return;
 
-        if (eventData.button != PointerEventData.InputButton.Left)
-        {
-            Debug.Log("Not left click, ignoring");
-            return;
-        }
-
-        if (PanelManager.Instance == null)
-        {
-            Debug.LogError("PanelManager.Instance is NULL!");
-            return;
-        }
-
-        if (PanelManager.Instance.currentPanel != myPanel)
-        {
-            Debug.Log("Current panel is " + PanelManager.Instance.currentPanel.name + ", but myPanel is " + myPanel.name + " - ignoring click");
-            return;
-        }
-
-        if (requiredZoom > 0f && myPanel.GetZoom() < requiredZoom)
-        {
-            Debug.Log("Need to zoom in more to use " + gameObject.name);
-            return;
-        }
-
-        float timeSinceLastClick = Time.time - lastClickTime;
-        Debug.Log("Time since last click: " + timeSinceLastClick);
-
-        bool isDoubleClick = (timeSinceLastClick <= doubleClickThreshold) && (timeSinceLastClick > 0f);
+        float timeSinceLast = Time.time - lastClickTime;
+        bool isDoubleClick = (timeSinceLast <= doubleClickThreshold) && (timeSinceLast > 0f);
         lastClickTime = Time.time;
 
         if (isDoubleClick)
         {
-            Debug.Log("DOUBLE CLICK DETECTED! Starting seamless transition!");
             myPanel.ClaimDoubleClick();
-
-            if (targetPanel != null)
-            {
-                PanelManager.Instance.PlaySeamlessTransition(myPanel, targetPanel, rect);
-            }
-        }
-        else
-        {
-            Debug.Log("Single click - waiting for second click...");
+            PanelManager.Instance.ZoomIntoTarget(this);
         }
     }
 
-    public void TriggerTransition()
+    // Get the center of the zoom target (Mars) in the panel's local space
+    Vector2 CalculateTargetCenterInPanel()
     {
-        if (PanelManager.Instance == null || targetPanel == null || myPanel == null)
-            return;
+        Vector3[] corners = new Vector3[4];
+        zoomTarget.GetWorldCorners(corners);
+        Vector3 worldCenter = (corners[0] + corners[2]) / 2f;
 
-        PanelManager.Instance.PlaySeamlessTransition(myPanel, targetPanel, rect);
+        RectTransform panelRect = myPanel.GetComponent<RectTransform>();
+        Vector3 localPos = panelRect.InverseTransformPoint(worldCenter);
+        return new Vector2(localPos.x, localPos.y);
     }
+
+    // Calculate how much to zoom so the target fills the screen
+    float CalculateScaleToFillScreen()
+    {
+        Canvas canvas = GetComponentInParent<Canvas>();
+        Vector2 canvasSize = canvas.GetComponent<RectTransform>().rect.size;
+
+        // Get the target's ACTUAL displayed size (rect size * scale)
+        Vector2 targetSize = zoomTarget.rect.size;
+        Vector3 targetScale = zoomTarget.localScale;
+
+        // Actual visible size is rect size multiplied by scale
+        float actualWidth = targetSize.x * targetScale.x;
+        float actualHeight = targetSize.y * targetScale.y;
+
+        // We need to scale up until this small Mars fills the whole screen
+        float scaleX = canvasSize.x / actualWidth;
+        float scaleY = canvasSize.y / actualHeight;
+
+        // Use the LARGER scale to ensure Mars fills the screen completely
+        float scale = Mathf.Max(scaleX, scaleY);
+
+        Debug.Log("Canvas: " + canvasSize + ", Target actual size: " + actualWidth + "x" + actualHeight + ", Scale needed: " + scale);
+
+        return scale;
+    }
+
+    // Public getters return cached values
+    public Vector2 GetTargetCenterInPanel() => cachedTargetCenter;
+    public float GetScaleToFillScreen() => cachedScaleToFill;
 }

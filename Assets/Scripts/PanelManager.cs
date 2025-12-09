@@ -9,21 +9,11 @@ public class PanelManager : MonoBehaviour
     [Header("Starting Panel")]
     public ZoomablePanel currentPanel;
 
-    [Header("Seamless Transition Settings")]
-    [Tooltip("Duration of the zoom-into-hotspot animation")]
-    public float seamlessZoomDuration = 0.8f;
-
-    [Header("Legacy Transition Settings")]
-    public float autoZoomScale = 2f;
-    public float autoZoomDuration = 0.5f;
+    SimpleHotspot lastHotspot;
 
     void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
     }
 
@@ -36,151 +26,121 @@ public class PanelManager : MonoBehaviour
         }
     }
 
-    public void SwitchToPanel(ZoomablePanel newPanel)
+    public void ZoomIntoTarget(SimpleHotspot hotspot)
     {
-        if (newPanel == null || newPanel == currentPanel) return;
-
-        if (currentPanel != null)
-        {
-            currentPanel.gameObject.SetActive(false);
-        }
-
-        currentPanel = newPanel;
-        currentPanel.gameObject.SetActive(true);
-        currentPanel.ResetZoom();
+        lastHotspot = hotspot;
+        StartCoroutine(ZoomInCoroutine(hotspot));
     }
 
-    public void SwitchWithAutoZoom(ZoomablePanel fromPanel, ZoomablePanel toPanel)
+    IEnumerator ZoomInCoroutine(SimpleHotspot hotspot)
     {
-        if (fromPanel == null || toPanel == null) return;
-        PlayAutoZoomTransition(fromPanel, toPanel);
-    }
+        ZoomablePanel fromPanel = hotspot.myPanel;
+        ZoomablePanel toPanel = hotspot.targetPanel;
+        RectTransform zoomTarget = hotspot.zoomTarget;
 
-    public void SwitchWithAutoZoom(ZoomablePanel toPanel)
-    {
-        if (toPanel == null || currentPanel == null) return;
-        PlayAutoZoomTransition(currentPanel, toPanel);
-    }
-
-    public void PlaySeamlessTransition(ZoomablePanel fromPanel, ZoomablePanel toPanel, RectTransform hotspotRect)
-    {
-        if (fromPanel == null || toPanel == null || hotspotRect == null)
-        {
-            Debug.LogError("PlaySeamlessTransition: Missing references!");
-            return;
-        }
-        StartCoroutine(SeamlessTransitionCoroutine(fromPanel, toPanel, hotspotRect));
-    }
-
-    IEnumerator SeamlessTransitionCoroutine(ZoomablePanel fromPanel, ZoomablePanel toPanel, RectTransform hotspotRect)
-    {
         fromPanel.SetTransitioning(true);
 
-        RectTransform panelRect = fromPanel.GetRectTransform();
+        RectTransform panelRect = fromPanel.GetComponent<RectTransform>();
 
-        Vector3[] hotspotCorners = new Vector3[4];
-        hotspotRect.GetWorldCorners(hotspotCorners);
-        Vector3 hotspotWorldCenter = (hotspotCorners[0] + hotspotCorners[2]) / 2f;
-
-        Vector3 localPos3D = panelRect.InverseTransformPoint(hotspotWorldCenter);
-        Vector2 hotspotLocalPos = new Vector2(localPos3D.x, localPos3D.y);
-
-        float hotspotWidth = Vector3.Distance(hotspotCorners[0], hotspotCorners[3]);
-        float hotspotHeight = Vector3.Distance(hotspotCorners[0], hotspotCorners[1]);
-        Vector2 hotspotWorldSize = new Vector2(hotspotWidth, hotspotHeight);
-
-        Canvas canvas = panelRect.GetComponentInParent<Canvas>();
-        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-        Vector2 canvasSize = canvasRect.rect.size;
-
-        float scaleX = canvasSize.x / Mathf.Max(hotspotWorldSize.x, 1f);
-        float scaleY = canvasSize.y / Mathf.Max(hotspotWorldSize.y, 1f);
-        float scaleNeeded = Mathf.Max(scaleX, scaleY) * 1.15f;
-
-        scaleNeeded = Mathf.Clamp(scaleNeeded, 3f, 15f);
+        // Get where Mars is and how much to zoom
+        Vector2 targetCenter = hotspot.GetTargetCenterInPanel();
+        float targetScale = hotspot.GetScaleToFillScreen();
 
         Vector3 startScale = panelRect.localScale;
         Vector2 startPos = panelRect.anchoredPosition;
 
-        Vector3 targetScale = startScale * scaleNeeded;
-        Vector2 targetPos = -hotspotLocalPos * targetScale.x;
+        // End values - zoom so Mars fills the screen
+        Vector3 endScale = Vector3.one * targetScale;
+        Vector2 endPos = -targetCenter * targetScale;
 
+        float duration = hotspot.zoomDuration;
         float timer = 0f;
 
-        while (timer < seamlessZoomDuration)
+        // Zoom animation
+        while (timer < duration)
         {
             timer += Time.deltaTime;
-            float rawT = timer / seamlessZoomDuration;
+            float t = timer / duration;
+            t = t * t * (3f - 2f * t); // Smoothstep
 
-            float t = rawT * rawT * (3f - 2f * rawT);
-
-            panelRect.localScale = Vector3.Lerp(startScale, targetScale, t);
-            panelRect.anchoredPosition = Vector2.Lerp(startPos, targetPos, t);
+            panelRect.localScale = Vector3.Lerp(startScale, endScale, t);
+            panelRect.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
 
             yield return null;
         }
 
-        panelRect.localScale = targetScale;
-        panelRect.anchoredPosition = targetPos;
+        panelRect.localScale = endScale;
+        panelRect.anchoredPosition = endPos;
 
-        yield return new WaitForSeconds(0.03f);
+        // Now Mars fills the screen - do the switch
+        // Reparent Mars to canvas level
+        Canvas canvas = fromPanel.GetComponentInParent<Canvas>();
+        toPanel.transform.SetParent(canvas.transform, true);
 
-        Transform canvasTransform = fromPanel.transform.parent;
-        toPanel.transform.SetParent(canvasTransform, false);
-
+        // Hide the old panel
         fromPanel.gameObject.SetActive(false);
+
+        // Reset Mars to fill screen properly
+        RectTransform toRect = toPanel.GetComponent<RectTransform>();
+        toRect.anchorMin = Vector2.zero;
+        toRect.anchorMax = Vector2.one;
+        toRect.offsetMin = Vector2.zero;
+        toRect.offsetMax = Vector2.zero;
+        toRect.localScale = Vector3.one;
+        toRect.anchoredPosition = Vector2.zero;
+
         currentPanel = toPanel;
-        toPanel.gameObject.SetActive(true);
         toPanel.ResetZoom();
+        fromPanel.ResetZoom();
+
+        Debug.Log("Zoom in complete: " + fromPanel.name + " -> " + toPanel.name);
     }
 
-    public void PlayAutoZoomTransition(ZoomablePanel fromPanel, ZoomablePanel toPanel)
+    public void ZoomOutFromPanel(ZoomablePanel fromPanel)
     {
-        if (fromPanel == null || toPanel == null) return;
-        StartCoroutine(AutoZoomRoutine(fromPanel, toPanel));
-    }
+        Debug.Log("ZoomOutFromPanel called, fromPanel=" + fromPanel.name);
 
-    IEnumerator AutoZoomRoutine(ZoomablePanel fromPanel, ZoomablePanel toPanel)
-    {
-        fromPanel.SetTransitioning(true);
-
-        var rect = fromPanel.GetRectTransform();
-        Vector3 startScale = rect.localScale;
-        Vector3 targetScale = startScale * autoZoomScale;
-
-        float timer = 0f;
-
-        while (timer < autoZoomDuration)
+        if (lastHotspot == null)
         {
-            timer += Time.deltaTime;
-            float t = timer / autoZoomDuration;
-            t = t * t * (3f - 2f * t);
-
-            rect.localScale = Vector3.Lerp(startScale, targetScale, t);
-            yield return null;
+            Debug.Log("No hotspot to go back through");
+            return;
         }
 
-        fromPanel.gameObject.SetActive(false);
-        currentPanel = toPanel;
-        toPanel.gameObject.SetActive(true);
-        toPanel.ResetZoom();
+        StartCoroutine(ZoomOutCoroutine(fromPanel, lastHotspot));
     }
 
-    public void PlayAutoZoomTransitionToFinal(ZoomablePanel fromPanel, ZoomablePanel toPanel)
+    IEnumerator ZoomOutCoroutine(ZoomablePanel fromPanel, SimpleHotspot hotspot)
     {
-        if (fromPanel == null || toPanel == null) return;
-        StartCoroutine(AutoZoomToFinalRoutine(fromPanel, toPanel));
-    }
+        ZoomablePanel toPanel = hotspot.myPanel;
 
-    IEnumerator AutoZoomToFinalRoutine(ZoomablePanel fromPanel, ZoomablePanel toPanel)
-    {
         fromPanel.SetTransitioning(true);
 
-        var rect = fromPanel.GetRectTransform();
-        Vector3 startScale = rect.localScale;
-        Vector3 targetScale = startScale * (autoZoomScale * 1.2f);
+        // Get the cached values (calculated at Start when hierarchy was correct)
+        Vector2 targetCenter = hotspot.GetTargetCenterInPanel();
+        float zoomScale = hotspot.GetScaleToFillScreen();
 
-        float duration = autoZoomDuration * 1.2f;
+        // Reparent Mars back into GameDevDeskIntro
+        fromPanel.transform.SetParent(toPanel.transform, false);
+
+        // Restore Mars to its original transform
+        hotspot.RestoreMarsTransform();
+
+        // Show the parent panel, starting zoomed in
+        toPanel.gameObject.SetActive(true);
+        RectTransform toRect = toPanel.GetComponent<RectTransform>();
+
+        // Start zoomed in (Mars filling screen)
+        Vector3 startScale = Vector3.one * zoomScale;
+        Vector2 startPos = -targetCenter * zoomScale;
+
+        toRect.localScale = startScale;
+        toRect.anchoredPosition = startPos;
+
+        // End at normal zoom
+        Vector3 endScale = Vector3.one;
+        Vector2 endPos = Vector2.zero;
+
+        float duration = hotspot.zoomDuration;
         float timer = 0f;
 
         while (timer < duration)
@@ -189,13 +149,50 @@ public class PanelManager : MonoBehaviour
             float t = timer / duration;
             t = t * t * (3f - 2f * t);
 
-            rect.localScale = Vector3.Lerp(startScale, targetScale, t);
+            toRect.localScale = Vector3.Lerp(startScale, endScale, t);
+            toRect.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
+
             yield return null;
         }
 
-        fromPanel.gameObject.SetActive(false);
+        toRect.localScale = endScale;
+        toRect.anchoredPosition = endPos;
+
         currentPanel = toPanel;
-        toPanel.gameObject.SetActive(true);
         toPanel.ResetZoom();
+
+        Debug.Log("Zoom out complete: " + fromPanel.name + " -> " + toPanel.name);
+    }
+
+    // Legacy methods
+    public void SwitchToPanel(ZoomablePanel newPanel)
+    {
+        if (newPanel == null || newPanel == currentPanel) return;
+        if (currentPanel != null) { currentPanel.gameObject.SetActive(false); currentPanel.ResetZoom(); }
+        currentPanel = newPanel;
+        currentPanel.gameObject.SetActive(true);
+        currentPanel.ResetZoom();
+    }
+
+    public void SwitchWithAutoZoom(ZoomablePanel fromPanel, ZoomablePanel toPanel)
+    {
+        StartCoroutine(AutoZoom(fromPanel, toPanel));
+    }
+
+    public void SwitchWithAutoZoom(ZoomablePanel toPanel)
+    {
+        if (currentPanel != null) StartCoroutine(AutoZoom(currentPanel, toPanel));
+    }
+
+    IEnumerator AutoZoom(ZoomablePanel from, ZoomablePanel to)
+    {
+        from.SetTransitioning(true);
+        RectTransform rect = from.GetComponent<RectTransform>();
+        Vector3 start = rect.localScale;
+        Vector3 end = start * 2f;
+        float t = 0f;
+        while (t < 0.5f) { t += Time.deltaTime; rect.localScale = Vector3.Lerp(start, end, t / 0.5f); yield return null; }
+        from.gameObject.SetActive(false); from.ResetZoom();
+        currentPanel = to; to.gameObject.SetActive(true); to.ResetZoom();
     }
 }

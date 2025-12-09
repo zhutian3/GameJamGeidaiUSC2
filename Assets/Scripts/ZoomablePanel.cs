@@ -6,133 +6,108 @@ public class ZoomablePanel : MonoBehaviour
 {
     [Header("Zoom Settings")]
     public float minZoom = 1f;
-    public float maxZoom = 3f;
-    public float zoomStep = 1.5f;
-    public float zoomSmoothSpeed = 8f;
+    public float maxZoom = 5f;
+    public float zoomStep = 1.3f;
+    public float zoomSmoothSpeed = 5f;
 
-    [Header("Previous Panel (for double right-click)")]
+    [Header("Navigation")]
     public ZoomablePanel previousPanel;
 
     RectTransform rect;
     float currentZoom = 1f;
     float targetZoom = 1f;
-    Vector2 targetAnchoredPosition = Vector2.zero;
-    Vector2 currentAnchoredPosition = Vector2.zero;
+    Vector2 currentPos = Vector2.zero;
+    Vector2 targetPos = Vector2.zero;
 
-    float lastLeftClickTime = 0f;
-    float lastRightClickTime = 0f;
-    float doubleClickThreshold = 0.3f;
+    float lastLeftClick = 0f;
+    float lastRightClick = 0f;
+    float doubleClickTime = 0.3f;
 
-    bool hotspotClaimedDoubleClick = false;
+    bool hotspotClaimed = false;
     bool isTransitioning = false;
 
     void Awake()
     {
         rect = GetComponent<RectTransform>();
-        currentZoom = 1f;
-        targetZoom = 1f;
-        currentAnchoredPosition = Vector2.zero;
-        targetAnchoredPosition = Vector2.zero;
-        rect.localScale = Vector3.one;
-        rect.anchoredPosition = Vector2.zero;
     }
 
     void Update()
     {
         if (!isTransitioning)
         {
-            HandleMouse();
+            HandleInput();
         }
-        AnimateZoom();
+        SmoothZoom();
     }
 
     void LateUpdate()
     {
-        hotspotClaimedDoubleClick = false;
+        hotspotClaimed = false;
     }
 
-    bool IsPointerOverUIElement()
+    bool ClickedOnHotspot()
     {
-        PointerEventData eventData = new PointerEventData(EventSystem.current);
-        eventData.position = Input.mousePosition;
+        PointerEventData data = new PointerEventData(EventSystem.current);
+        data.position = Input.mousePosition;
         List<RaycastResult> results = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, results);
+        EventSystem.current.RaycastAll(data, results);
 
-        foreach (RaycastResult result in results)
+        foreach (var r in results)
         {
-            SeamlessHotspot hotspot = result.gameObject.GetComponent<SeamlessHotspot>();
-            if (hotspot != null)
-            {
+            if (r.gameObject.GetComponent<SimpleHotspot>() != null)
                 return true;
-            }
         }
         return false;
     }
 
-    void HandleMouse()
+    void HandleInput()
     {
+        // Left click = zoom in
         if (Input.GetMouseButtonDown(0))
         {
-            if (IsPointerOverUIElement())
-            {
-                return;
-            }
+            if (ClickedOnHotspot()) return;
 
-            float t = Time.time - lastLeftClickTime;
-            if (t <= doubleClickThreshold && t > 0f)
+            float t = Time.time - lastLeftClick;
+            if (t <= doubleClickTime && t > 0)
             {
-                if (!hotspotClaimedDoubleClick)
-                {
-                    ZoomIn();
-                }
-                lastLeftClickTime = 0f;
+                if (!hotspotClaimed) ZoomIn();
+                lastLeftClick = 0;
             }
             else
             {
-                lastLeftClickTime = Time.time;
+                lastLeftClick = Time.time;
             }
         }
 
+        // Right click = zoom out / go back
         if (Input.GetMouseButtonDown(1))
         {
-            float t = Time.time - lastRightClickTime;
-            if (t <= doubleClickThreshold && t > 0f)
+            float t = Time.time - lastRightClick;
+            if (t <= doubleClickTime && t > 0)
             {
-                TryGoToPreviousPanel();
-                lastRightClickTime = 0f;
+                GoBack();
+                lastRightClick = 0;
             }
             else
             {
                 ZoomOut();
-                lastRightClickTime = Time.time;
+                lastRightClick = Time.time;
             }
         }
     }
 
-    void AnimateZoom()
+    void SmoothZoom()
     {
-        if (!Mathf.Approximately(currentZoom, targetZoom))
+        if (Mathf.Abs(currentZoom - targetZoom) > 0.001f)
         {
             currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomSmoothSpeed);
-
-            if (Mathf.Abs(currentZoom - targetZoom) < 0.001f)
-            {
-                currentZoom = targetZoom;
-            }
-
             rect.localScale = Vector3.one * currentZoom;
         }
 
-        if (Vector2.Distance(currentAnchoredPosition, targetAnchoredPosition) > 0.01f)
+        if (Vector2.Distance(currentPos, targetPos) > 0.1f)
         {
-            currentAnchoredPosition = Vector2.Lerp(currentAnchoredPosition, targetAnchoredPosition, Time.deltaTime * zoomSmoothSpeed);
-
-            if (Vector2.Distance(currentAnchoredPosition, targetAnchoredPosition) < 0.1f)
-            {
-                currentAnchoredPosition = targetAnchoredPosition;
-            }
-
-            rect.anchoredPosition = currentAnchoredPosition;
+            currentPos = Vector2.Lerp(currentPos, targetPos, Time.deltaTime * zoomSmoothSpeed);
+            rect.anchoredPosition = currentPos;
         }
     }
 
@@ -145,50 +120,67 @@ public class ZoomablePanel : MonoBehaviour
     void ZoomOut()
     {
         if (targetZoom <= minZoom) return;
+
+        float oldZoom = targetZoom;
         targetZoom = Mathf.Max(targetZoom / zoomStep, minZoom);
 
-        float zoomRatio = targetZoom / Mathf.Max(currentZoom, 0.001f);
-        targetAnchoredPosition *= zoomRatio;
+        float ratio = targetZoom / oldZoom;
+        targetPos *= ratio;
     }
 
-    void TryGoToPreviousPanel()
+    void GoBack()
     {
-        if (targetZoom > minZoom + 0.01f) return;
-        if (previousPanel == null) return;
+        Debug.Log("GoBack called on " + gameObject.name + ", targetZoom=" + targetZoom + ", minZoom=" + minZoom);
 
-        PanelManager.Instance.SwitchToPanel(previousPanel);
+        if (targetZoom > minZoom + 0.05f)
+        {
+            Debug.Log("GoBack: Not at min zoom, returning");
+            return;
+        }
+        if (previousPanel == null)
+        {
+            Debug.Log("GoBack: previousPanel is null, returning");
+            return;
+        }
+        if (PanelManager.Instance == null)
+        {
+            Debug.Log("GoBack: PanelManager.Instance is null, returning");
+            return;
+        }
+
+        Debug.Log("GoBack: Calling ZoomOutFromPanel");
+        PanelManager.Instance.ZoomOutFromPanel(this);
     }
 
-    public float GetZoom()
+    public void ClaimDoubleClick()
     {
-        return currentZoom;
+        hotspotClaimed = true;
+    }
+
+    public void SetTransitioning(bool val)
+    {
+        isTransitioning = val;
+    }
+
+    public float GetZoom() => currentZoom;
+
+    public RectTransform GetRectTransform()
+    {
+        if (rect == null) rect = GetComponent<RectTransform>();
+        return rect;
     }
 
     public void ResetZoom()
     {
         currentZoom = 1f;
         targetZoom = 1f;
-        currentAnchoredPosition = Vector2.zero;
-        targetAnchoredPosition = Vector2.zero;
+        currentPos = Vector2.zero;
+        targetPos = Vector2.zero;
+
         if (rect == null) rect = GetComponent<RectTransform>();
         rect.localScale = Vector3.one;
         rect.anchoredPosition = Vector2.zero;
+
         isTransitioning = false;
-    }
-
-    public void ClaimDoubleClick()
-    {
-        hotspotClaimedDoubleClick = true;
-    }
-
-    public void SetTransitioning(bool value)
-    {
-        isTransitioning = value;
-    }
-
-    public RectTransform GetRectTransform()
-    {
-        if (rect == null) rect = GetComponent<RectTransform>();
-        return rect;
     }
 }
