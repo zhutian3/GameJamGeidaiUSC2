@@ -1,45 +1,64 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance;
 
-    public Image inventoryIcon;
-    public Sprite emptySprite;
+    [Header("Single Slot")]
+    public InventoryItemUI inventoryItemUI;   // 场景里的 InventoryItemImage 上的脚本
 
-    string currentItemId = null;
+    private string currentItemId;
+
+    public bool HasItem => !string.IsNullOrEmpty(currentItemId);
+    public string CurrentItemId => currentItemId;
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+
+        if (inventoryItemUI != null)
+        {
+            inventoryItemUI.gameObject.SetActive(false);
+            inventoryItemUI.Clear();
+        }
     }
 
-    public bool HasItem() => !string.IsNullOrEmpty(currentItemId);
-
-    public bool TryPickup(string itemId, Sprite iconSprite)
+    /// <summary>
+    /// 往背包里放一个物品。当前已经有物品时直接忽略（单物品背包）。
+    /// </summary>
+    public void AddItem(string itemId, Sprite icon)
     {
-        if (HasItem()) return false;
+        if (HasItem)
+        {
+            // 如果以后想改成覆盖旧物品，可以先 ClearItem() 再赋值
+            return;
+        }
 
         currentItemId = itemId;
-        inventoryIcon.sprite = iconSprite;
-        return true;
+
+        if (inventoryItemUI != null)
+        {
+            inventoryItemUI.Setup(itemId, icon);
+            inventoryItemUI.gameObject.SetActive(true);
+        }
     }
 
-    public bool UseItem(string requiredItemId)
-    {
-        if (!HasItem()) return false;
-        if (currentItemId != requiredItemId) return false;
-
-        Clear();
-        return true;
-    }
-
-    public void Clear()
+    /// <summary>
+    /// 使用完物品后清空背包。
+    /// </summary>
+    public void ClearItem()
     {
         currentItemId = null;
-        inventoryIcon.sprite = emptySprite;
-    }
 
-    public string GetCurrentItemId() => currentItemId;
+        if (inventoryItemUI != null)
+        {
+            inventoryItemUI.Clear();
+            inventoryItemUI.gameObject.SetActive(false);
+        }
+    }
 }
