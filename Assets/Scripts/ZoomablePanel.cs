@@ -6,38 +6,65 @@ public class ZoomablePanel : MonoBehaviour
     public float minZoom = 1f;
     public float maxZoom = 3f;
     public float zoomStep = 1.5f;
+    public float zoomSmoothSpeed = 8f;
 
-    [Header("Links")]
-    public ZoomablePanel previousPanel;   // where to go on double-right
-    public PanelManager panelManager;     // drag your PanelManager here in Inspector
+    [Header("Previous Panel (for double right-click)")]
+    public ZoomablePanel previousPanel;
 
     RectTransform rect;
     float currentZoom = 1f;
+    float targetZoom = 1f;
+    Vector2 targetAnchoredPosition = Vector2.zero;
+    Vector2 currentAnchoredPosition = Vector2.zero;
 
     float lastLeftClickTime = 0f;
     float lastRightClickTime = 0f;
-    float doubleClickThreshold = 0.25f; // seconds
+    float doubleClickThreshold = 0.3f;
+
+    // Flag to block generic zoom when hotspot claims the double-click
+    bool hotspotClaimedDoubleClick = false;
+
+    // Flag to prevent input during transitions
+    bool isTransitioning = false;
 
     void Awake()
     {
         rect = GetComponent<RectTransform>();
-        ResetZoom();
+        currentZoom = 1f;
+        targetZoom = 1f;
+        currentAnchoredPosition = Vector2.zero;
+        targetAnchoredPosition = Vector2.zero;
+        rect.localScale = Vector3.one;
+        rect.anchoredPosition = Vector2.zero;
     }
 
     void Update()
     {
-        HandleMouse();
+        if (!isTransitioning)
+        {
+            HandleMouse();
+        }
+        AnimateZoom();
+    }
+
+    void LateUpdate()
+    {
+        // Reset the flag at end of frame so next frame starts fresh
+        hotspotClaimedDoubleClick = false;
     }
 
     void HandleMouse()
     {
-        // LEFT mouse → zoom in on double-click
         if (Input.GetMouseButtonDown(0))
         {
             float t = Time.time - lastLeftClickTime;
-            if (t <= doubleClickThreshold)
+            if (t <= doubleClickThreshold && t > 0f)
             {
-                ZoomIn();
+                // Only do generic zoom if hotspot didn't claim this double-click
+                if (!hotspotClaimedDoubleClick)
+                {
+                    ZoomIn();
+                }
                 lastLeftClickTime = 0f;
             }
             else
@@ -46,11 +73,10 @@ public class ZoomablePanel : MonoBehaviour
             }
         }
 
-        // RIGHT mouse → zoom out or go back on double-right
         if (Input.GetMouseButtonDown(1))
         {
             float t = Time.time - lastRightClickTime;
-            if (t <= doubleClickThreshold)
+            if (t <= doubleClickThreshold && t > 0f)
             {
                 TryGoToPreviousPanel();
                 lastRightClickTime = 0f;
@@ -63,30 +89,57 @@ public class ZoomablePanel : MonoBehaviour
         }
     }
 
+    void AnimateZoom()
+    {
+        // Animate scale
+        if (!Mathf.Approximately(currentZoom, targetZoom))
+        {
+            currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomSmoothSpeed);
+
+            if (Mathf.Abs(currentZoom - targetZoom) < 0.001f)
+            {
+                currentZoom = targetZoom;
+            }
+
+            rect.localScale = Vector3.one * currentZoom;
+        }
+
+        // Animate position
+        if (Vector2.Distance(currentAnchoredPosition, targetAnchoredPosition) > 0.01f)
+        {
+            currentAnchoredPosition = Vector2.Lerp(currentAnchoredPosition, targetAnchoredPosition, Time.deltaTime * zoomSmoothSpeed);
+
+            if (Vector2.Distance(currentAnchoredPosition, targetAnchoredPosition) < 0.1f)
+            {
+                currentAnchoredPosition = targetAnchoredPosition;
+            }
+
+            rect.anchoredPosition = currentAnchoredPosition;
+        }
+    }
+
     void ZoomIn()
     {
-        if (currentZoom >= maxZoom) return;
-
-        currentZoom = Mathf.Min(currentZoom * zoomStep, maxZoom);
-        rect.localScale = Vector3.one * currentZoom;
+        if (targetZoom >= maxZoom) return;
+        targetZoom = Mathf.Min(targetZoom * zoomStep, maxZoom);
     }
 
     void ZoomOut()
     {
-        if (currentZoom <= minZoom) return;
+        if (targetZoom <= minZoom) return;
+        targetZoom = Mathf.Max(targetZoom / zoomStep, minZoom);
 
-        currentZoom = Mathf.Max(currentZoom / zoomStep, minZoom);
-        rect.localScale = Vector3.one * currentZoom;
+        // When zooming out, ease position back toward center proportionally
+        float zoomRatio = targetZoom / Mathf.Max(currentZoom, 0.001f);
+        targetAnchoredPosition *= zoomRatio;
     }
 
     void TryGoToPreviousPanel()
     {
-        // Only go back if fully zoomed out
-        if (currentZoom > minZoom) return;
+        if (targetZoom > minZoom + 0.01f) return;
         if (previousPanel == null) return;
-        if (panelManager == null) return;
 
-        panelManager.SwitchToPanel(previousPanel);
+        PanelManager.Instance.SwitchToPanel(previousPanel);
     }
 
     public float GetZoom()
@@ -97,7 +150,37 @@ public class ZoomablePanel : MonoBehaviour
     public void ResetZoom()
     {
         currentZoom = 1f;
+        targetZoom = 1f;
+        currentAnchoredPosition = Vector2.zero;
+        targetAnchoredPosition = Vector2.zero;
         if (rect == null) rect = GetComponent<RectTransform>();
         rect.localScale = Vector3.one;
+        rect.anchoredPosition = Vector2.zero;
+        isTransitioning = false;
+    }
+
+    /// <summary>
+    /// Called by SeamlessHotspot to claim the double-click so we don't do generic zoom.
+    /// </summary>
+    public void ClaimDoubleClick()
+    {
+        hotspotClaimedDoubleClick = true;
+    }
+
+    /// <summary>
+    /// Called by PanelManager to lock input during animated transitions.
+    /// </summary>
+    public void SetTransitioning(bool value)
+    {
+        isTransitioning = value;
+    }
+
+    /// <summary>
+    /// Returns the RectTransform for external animation.
+    /// </summary>
+    public RectTransform GetRectTransform()
+    {
+        if (rect == null) rect = GetComponent<RectTransform>();
+        return rect;
     }
 }

@@ -5,7 +5,7 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager Instance;
 
     [Header("Single Slot")]
-    public InventoryItemUI inventoryItemUI;   // 场景里的 InventoryItemImage 上的脚本
+    public InventoryItemUI inventoryItemUI;
 
     private string currentItemId;
 
@@ -28,14 +28,10 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 往背包里放一个物品。当前已经有物品时直接忽略（单物品背包）。
-    /// </summary>
     public void AddItem(string itemId, Sprite icon)
     {
         if (HasItem)
         {
-            // 如果以后想改成覆盖旧物品，可以先 ClearItem() 再赋值
             return;
         }
 
@@ -48,9 +44,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 使用完物品后清空背包。
-    /// </summary>
     public void ClearItem()
     {
         currentItemId = null;

@@ -149,8 +149,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PanelManager
   currentPanel: {fileID: 329694607}
+  seamlessZoomDuration: 0.8
+  autoZoomScale: 2
   autoZoomDuration: 0.5
-  autoZoomMultiplier: 2
 --- !u!4 &138196032
 Transform:
   m_ObjectHideFlags: 0
@@ -184,7 +185,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &142953040
 RectTransform:
   m_ObjectHideFlags: 0
@@ -192,12 +193,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142953039}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1887096996}
+  m_Father: {fileID: 1247791249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -219,8 +220,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 329694607}
-  panelManager: {fileID: 138196031}
 --- !u!114 &142953042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,8 +294,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 0}
-  panelManager: {fileID: 0}
 --- !u!114 &329694608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,8 +408,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 1318946391}
-  panelManager: {fileID: 138196031}
 --- !u!114 &455491757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -560,8 +561,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 0}
-  panelManager: {fileID: 138196031}
 --- !u!114 &594365251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -631,13 +632,13 @@ GameObject:
   - component: {fileID: 705217091}
   - component: {fileID: 705217090}
   - component: {fileID: 705217089}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Mars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &705217088
 RectTransform:
   m_ObjectHideFlags: 0
@@ -645,12 +646,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705217087}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1887096996}
+  m_Father: {fileID: 1376731040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -672,8 +673,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 329694607}
-  panelManager: {fileID: 138196031}
 --- !u!114 &705217090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -765,8 +766,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 594365250}
-  panelManager: {fileID: 138196031}
 --- !u!114 &1098593893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,6 +818,7 @@ GameObject:
   - component: {fileID: 1247791252}
   - component: {fileID: 1247791251}
   - component: {fileID: 1247791250}
+  - component: {fileID: 1247791253}
   m_Layer: 5
   m_Name: Hotspot_Toybox
   m_TagString: Untagged
@@ -835,13 +837,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 142953040}
   m_Father: {fileID: 329694610}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 525, y: 270}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: -1562, y: -836}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1247791250
 MonoBehaviour:
@@ -852,14 +855,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1247791248}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a7ce42b2c9cb7746a32fbe625745542, type: 3}
+  m_Script: {fileID: 11500000, guid: b6b445dd44eb0634fbcdcf5d2fae3778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionHotspotUI
-  panelManager: {fileID: 138196031}
   myPanel: {fileID: 329694607}
   targetPanel: {fileID: 142953041}
   requiredZoom: 0
-  useAutoZoom: 1
+  doubleClickThreshold: 0.3
 --- !u!114 &1247791251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -898,6 +900,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1247791248}
   m_CullTransparentMesh: 1
+--- !u!114 &1247791253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247791248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
+  m_ShowMaskGraphic: 1
 --- !u!1 &1270298511
 GameObject:
   m_ObjectHideFlags: 0
@@ -1069,8 +1084,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 594365250}
-  panelManager: {fileID: 138196031}
 --- !u!114 &1318946392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1140,6 +1155,7 @@ GameObject:
   - component: {fileID: 1376731043}
   - component: {fileID: 1376731042}
   - component: {fileID: 1376731041}
+  - component: {fileID: 1376731044}
   m_Layer: 5
   m_Name: Hotspot_Pepperoni
   m_TagString: Untagged
@@ -1158,13 +1174,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 705217088}
   m_Father: {fileID: 329694610}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 220, y: -383}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: -1562, y: -836}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1376731041
 MonoBehaviour:
@@ -1175,14 +1192,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1376731039}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a7ce42b2c9cb7746a32fbe625745542, type: 3}
+  m_Script: {fileID: 11500000, guid: b6b445dd44eb0634fbcdcf5d2fae3778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionHotspotUI
-  panelManager: {fileID: 138196031}
   myPanel: {fileID: 329694607}
   targetPanel: {fileID: 705217089}
   requiredZoom: 0
-  useAutoZoom: 1
+  doubleClickThreshold: 0.3
 --- !u!114 &1376731042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1221,6 +1237,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1376731039}
   m_CullTransparentMesh: 1
+--- !u!114 &1376731044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376731039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
+  m_ShowMaskGraphic: 1
 --- !u!1 &1760630982
 GameObject:
   m_ObjectHideFlags: 0
@@ -1274,8 +1303,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 1318946391}
-  panelManager: {fileID: 138196031}
 --- !u!114 &1760630985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1346,8 +1375,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 329694610}
-  - {fileID: 705217088}
-  - {fileID: 142953040}
   - {fileID: 594365253}
   - {fileID: 1098593891}
   - {fileID: 1318946394}

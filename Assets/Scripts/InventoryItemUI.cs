@@ -64,10 +64,9 @@ public class InventoryItemUI : MonoBehaviour,
         originalParent = rectTransform.parent;
         originalAnchoredPos = rectTransform.anchoredPosition;
 
-        // 临时放到 Canvas 顶层，避免被挡住
         rectTransform.SetParent(canvas.transform, true);
 
-        canvasGroup.blocksRaycasts = false; // 让 DropTarget 接收 OnDrop
+        canvasGroup.blocksRaycasts = false;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -87,9 +86,6 @@ public class InventoryItemUI : MonoBehaviour,
     {
         canvasGroup.blocksRaycasts = true;
 
-        // 无论是否放置成功，都回到背包原位。
-        // 放置成功的情况下，InventoryManager 会立刻 ClearItem() 并隐藏这个图标，
-        // 玩家基本看不到回弹。
         rectTransform.SetParent(originalParent, true);
         rectTransform.anchoredPosition = originalAnchoredPos;
     }
