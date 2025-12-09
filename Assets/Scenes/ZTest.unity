@@ -149,8 +149,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PanelManager
   currentPanel: {fileID: 329694607}
-  autoZoomDuration: 0.5
-  autoZoomMultiplier: 2
+  seamlessZoomDuration: 0.8
+  autoZoomScale: 3
+  autoZoomDuration: 0.8
 --- !u!4 &138196032
 Transform:
   m_ObjectHideFlags: 0
@@ -184,7 +185,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &142953040
 RectTransform:
   m_ObjectHideFlags: 0
@@ -192,13 +193,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142953039}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 200371316}
-  m_Father: {fileID: 1887096996}
+  - {fileID: 1422920518}
+  m_Father: {fileID: 1247791249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -220,8 +221,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 329694607}
-  panelManager: {fileID: 138196031}
 --- !u!114 &142953042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,98 +261,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142953039}
   m_CullTransparentMesh: 1
---- !u!1 &200371315
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 200371316}
-  - component: {fileID: 200371319}
-  - component: {fileID: 200371318}
-  - component: {fileID: 200371317}
-  m_Layer: 5
-  m_Name: RocketItem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &200371316
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 200371315}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 142953040}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &200371317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 200371315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20255c57a597f4b46b285bafa562405d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CollectibleItem
-  itemId: rocket
-  itemIcon: {fileID: 1235481947656924648, guid: 81b520ca8179b514caa717c6135e5691, type: 3}
-  panelManager: {fileID: 0}
-  myPanel: {fileID: 0}
---- !u!114 &200371318
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 200371315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 1235481947656924648, guid: 81b520ca8179b514caa717c6135e5691, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &200371319
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 200371315}
-  m_CullTransparentMesh: 1
 --- !u!1 &329694606
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,8 +295,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 0}
-  panelManager: {fileID: 0}
 --- !u!114 &329694608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,7 +356,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &350072237
+--- !u!1 &444515795
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -455,51 +364,65 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 350072242}
-  - component: {fileID: 350072241}
-  - component: {fileID: 350072240}
-  - component: {fileID: 350072238}
-  - component: {fileID: 350072239}
-  m_Layer: 5
-  m_Name: InventoryItemImage
+  - component: {fileID: 444515796}
+  - component: {fileID: 444515799}
+  - component: {fileID: 444515798}
+  - component: {fileID: 444515797}
+  m_Layer: 6
+  m_Name: RocketSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &350072238
+--- !u!224 &444515796
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444515795}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 705217088}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &444515797
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350072237}
+  m_GameObject: {fileID: 444515795}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31bf41aa987f95d44b77115f82c09c1a, type: 3}
+  m_Script: {fileID: 11500000, guid: 9f8e13757e0a29e488b320b1939817e7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryItemUI
-  itemId: 
-  iconImage: {fileID: 0}
---- !u!225 &350072239
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350072237}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!114 &350072240
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDropTargetUI
+  requiredItemId: rocket
+  myPanel: {fileID: 705217089}
+  targetPanel: {fileID: 594365250}
+  transitionRect: {fileID: 0}
+  targetImage: {fileID: 444515798}
+  transitionOnDrop: 0
+  transitionOnClick: 1
+  solvedClickAnimator: {fileID: 0}
+  solvedClickTrigger: Play
+  solvedClickDelay: 1
+--- !u!114 &444515798
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350072237}
+  m_GameObject: {fileID: 444515795}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -523,33 +446,14 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!222 &350072241
+--- !u!222 &444515799
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350072237}
+  m_GameObject: {fileID: 444515795}
   m_CullTransparentMesh: 1
---- !u!224 &350072242
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350072237}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 676472276}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &455491754
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,8 +507,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 1318946391}
-  panelManager: {fileID: 138196031}
 --- !u!114 &455491757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -722,6 +626,82 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &525884800
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 525884801}
+  - component: {fileID: 525884803}
+  - component: {fileID: 525884802}
+  m_Layer: 5
+  m_Name: InventoryPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &525884801
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525884800}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1016315213}
+  m_Father: {fileID: 1887096996}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 700, y: -344}
+  m_SizeDelta: {x: -1474.1995, y: -756.2728}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &525884802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525884800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &525884803
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525884800}
+  m_CullTransparentMesh: 1
 --- !u!1 &594365249
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,8 +736,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 0}
-  panelManager: {fileID: 138196031}
 --- !u!114 &594365251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -815,82 +795,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &676472275
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 676472276}
-  - component: {fileID: 676472278}
-  - component: {fileID: 676472277}
-  m_Layer: 5
-  m_Name: InventoryPanel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &676472276
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 676472275}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 350072242}
-  m_Father: {fileID: 1887096996}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 725, y: 81}
-  m_SizeDelta: {x: 129.1159, y: 145.8924}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &676472277
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 676472275}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &676472278
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 676472275}
-  m_CullTransparentMesh: 1
 --- !u!1 &705217087
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,13 +807,13 @@ GameObject:
   - component: {fileID: 705217091}
   - component: {fileID: 705217090}
   - component: {fileID: 705217089}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Mars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &705217088
 RectTransform:
   m_ObjectHideFlags: 0
@@ -917,13 +821,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705217087}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 885181954}
-  m_Father: {fileID: 1887096996}
+  - {fileID: 444515796}
+  m_Father: {fileID: 1376731040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -945,8 +849,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 329694607}
-  panelManager: {fileID: 138196031}
 --- !u!114 &705217090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -985,7 +889,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705217087}
   m_CullTransparentMesh: 1
---- !u!1 &885181953
+--- !u!1 &1016315209
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -993,66 +897,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 885181954}
-  - component: {fileID: 885181957}
-  - component: {fileID: 885181956}
-  - component: {fileID: 885181955}
+  - component: {fileID: 1016315213}
+  - component: {fileID: 1016315212}
+  - component: {fileID: 1016315211}
+  - component: {fileID: 1016315210}
   m_Layer: 5
-  m_Name: RocketDropPoint
+  m_Name: InventoryItemImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &885181954
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 885181953}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 705217088}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &885181955
+--- !u!114 &1016315210
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 885181953}
+  m_GameObject: {fileID: 1016315209}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f8e13757e0a29e488b320b1939817e7, type: 3}
+  m_Script: {fileID: 11500000, guid: 31bf41aa987f95d44b77115f82c09c1a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemDropTargetUI
-  requiredItemId: rocket
-  panelManager: {fileID: 0}
-  myPanel: {fileID: 142953041}
-  targetPanel: {fileID: 705217089}
-  useAutoZoom: 1
-  targetImage: {fileID: 0}
-  transitionOnDrop: 0
-  transitionOnClick: 1
-  solvedClickAnimator: {fileID: 0}
-  solvedClickTrigger: Play
-  solvedClickDelay: 1
---- !u!114 &885181956
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryItemUI
+  itemId: 
+  iconImage: {fileID: 1016315211}
+--- !u!114 &1016315211
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 885181953}
+  m_GameObject: {fileID: 1016315209}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -1076,14 +952,33 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!222 &885181957
+--- !u!222 &1016315212
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 885181953}
+  m_GameObject: {fileID: 1016315209}
   m_CullTransparentMesh: 1
+--- !u!224 &1016315213
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1016315209}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 525884801}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1098593890
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,8 +1032,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 594365250}
-  panelManager: {fileID: 138196031}
 --- !u!114 &1098593893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1177,6 +1072,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1098593890}
   m_CullTransparentMesh: 1
+--- !u!1 &1167622186
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1167622188}
+  - component: {fileID: 1167622187}
+  m_Layer: 0
+  m_Name: InventoryManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1167622187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167622186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a7457b18b4f164bade0ac332777646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
+  inventoryItemUI: {fileID: 1016315210}
+--- !u!4 &1167622188
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167622186}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 897.40173, y: 508.9436, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1247791248
 GameObject:
   m_ObjectHideFlags: 0
@@ -1189,6 +1129,7 @@ GameObject:
   - component: {fileID: 1247791252}
   - component: {fileID: 1247791251}
   - component: {fileID: 1247791250}
+  - component: {fileID: 1247791253}
   m_Layer: 5
   m_Name: Hotspot_Toybox
   m_TagString: Untagged
@@ -1207,13 +1148,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 142953040}
   m_Father: {fileID: 329694610}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 525, y: 270}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: -1562, y: -836}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1247791250
 MonoBehaviour:
@@ -1224,14 +1166,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1247791248}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a7ce42b2c9cb7746a32fbe625745542, type: 3}
+  m_Script: {fileID: 11500000, guid: b6b445dd44eb0634fbcdcf5d2fae3778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionHotspotUI
-  panelManager: {fileID: 138196031}
   myPanel: {fileID: 329694607}
   targetPanel: {fileID: 142953041}
   requiredZoom: 0
-  useAutoZoom: 1
+  doubleClickThreshold: 0.3
 --- !u!114 &1247791251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1270,6 +1211,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1247791248}
   m_CullTransparentMesh: 1
+--- !u!114 &1247791253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247791248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
+  m_ShowMaskGraphic: 1
 --- !u!1 &1270298511
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,8 +1395,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 594365250}
-  panelManager: {fileID: 138196031}
 --- !u!114 &1318946392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1512,6 +1466,7 @@ GameObject:
   - component: {fileID: 1376731043}
   - component: {fileID: 1376731042}
   - component: {fileID: 1376731041}
+  - component: {fileID: 1376731044}
   m_Layer: 5
   m_Name: Hotspot_Pepperoni
   m_TagString: Untagged
@@ -1530,13 +1485,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 705217088}
   m_Father: {fileID: 329694610}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 220, y: -383}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: -1562, y: -836}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1376731041
 MonoBehaviour:
@@ -1547,14 +1503,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1376731039}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a7ce42b2c9cb7746a32fbe625745542, type: 3}
+  m_Script: {fileID: 11500000, guid: b6b445dd44eb0634fbcdcf5d2fae3778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionHotspotUI
-  panelManager: {fileID: 138196031}
   myPanel: {fileID: 329694607}
   targetPanel: {fileID: 705217089}
   requiredZoom: 0
-  useAutoZoom: 1
+  doubleClickThreshold: 0.3
 --- !u!114 &1376731042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1593,7 +1548,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1376731039}
   m_CullTransparentMesh: 1
---- !u!1 &1468231303
+--- !u!114 &1376731044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376731039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
+  m_ShowMaskGraphic: 1
+--- !u!1 &1422920517
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1601,43 +1569,89 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1468231305}
-  - component: {fileID: 1468231304}
-  m_Layer: 0
-  m_Name: InventoryManager
+  - component: {fileID: 1422920518}
+  - component: {fileID: 1422920521}
+  - component: {fileID: 1422920520}
+  - component: {fileID: 1422920519}
+  m_Layer: 5
+  m_Name: RocketImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1468231304
+--- !u!224 &1422920518
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422920517}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.69174, y: 0.64171, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 142953040}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 58, y: -190}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1422920519
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1468231303}
+  m_GameObject: {fileID: 1422920517}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27a7457b18b4f164bade0ac332777646, type: 3}
+  m_Script: {fileID: 11500000, guid: 20255c57a597f4b46b285bafa562405d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
-  inventoryItemUI: {fileID: 350072238}
---- !u!4 &1468231305
-Transform:
+  m_EditorClassIdentifier: Assembly-CSharp::CollectibleItem
+  itemId: rocket
+  itemIcon: {fileID: 1235481947656924648, guid: 81b520ca8179b514caa717c6135e5691, type: 3}
+  myPanel: {fileID: 142953041}
+--- !u!114 &1422920520
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1468231303}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 720.3523, y: 75.02812, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 1422920517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 1235481947656924648, guid: 81b520ca8179b514caa717c6135e5691, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1422920521
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422920517}
+  m_CullTransparentMesh: 1
 --- !u!1 &1760630982
 GameObject:
   m_ObjectHideFlags: 0
@@ -1691,8 +1705,8 @@ MonoBehaviour:
   minZoom: 1
   maxZoom: 3
   zoomStep: 1.5
+  zoomSmoothSpeed: 8
   previousPanel: {fileID: 1318946391}
-  panelManager: {fileID: 138196031}
 --- !u!114 &1760630985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1763,14 +1777,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 329694610}
-  - {fileID: 705217088}
-  - {fileID: 142953040}
   - {fileID: 594365253}
   - {fileID: 1098593891}
   - {fileID: 1318946394}
   - {fileID: 1760630983}
   - {fileID: 455491755}
-  - {fileID: 676472276}
+  - {fileID: 525884801}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1849,4 +1861,4 @@ SceneRoots:
   - {fileID: 479194540}
   - {fileID: 1887096996}
   - {fileID: 138196032}
-  - {fileID: 1468231305}
+  - {fileID: 1167622188}

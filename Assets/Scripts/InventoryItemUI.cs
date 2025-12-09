@@ -29,10 +29,13 @@ public class InventoryItemUI : MonoBehaviour,
             rectTransform = GetComponent<RectTransform>();
 
         originalAnchoredPos = rectTransform.anchoredPosition;
+
+        Debug.Log($"[InventoryItemUI] Setup item {itemId}");
     }
 
     public void Clear()
     {
+        Debug.Log($"[InventoryItemUI] Clear item {itemId}");
         itemId = null;
         if (iconImage != null)
             iconImage.sprite = null;
@@ -65,8 +68,9 @@ public class InventoryItemUI : MonoBehaviour,
         originalAnchoredPos = rectTransform.anchoredPosition;
 
         rectTransform.SetParent(canvas.transform, true);
+        canvasGroup.blocksRaycasts = false; // 让 DropTarget 能收到 OnDrop
 
-        canvasGroup.blocksRaycasts = false;
+        Debug.Log($"[InventoryItemUI] Begin drag {itemId}");
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -86,7 +90,10 @@ public class InventoryItemUI : MonoBehaviour,
     {
         canvasGroup.blocksRaycasts = true;
 
+        // 无论是否放置成功，都回到背包原位。
         rectTransform.SetParent(originalParent, true);
         rectTransform.anchoredPosition = originalAnchoredPos;
+
+        Debug.Log($"[InventoryItemUI] End drag {itemId}");
     }
 }
