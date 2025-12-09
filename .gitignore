@@ -1,0 +1,38 @@
+# ================
+# Unity generated folders
+# ================
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+
+# ================
+# Unity Packages cache
+# ================
+[Pp]ackages/PackageCache/
+
+# ================
+# Visual Studio / Rider
+# ================
+*.csproj
+*.sln
+*.user
+*.unityproj
+*.pidb
+*.suo
+*.tmp
+*.userprefs
+
+# ================
+# OS generated files
+# ================
+.DS_Store
+Thumbs.db
+
+# ================
+# Crash reports
+# ================
+*.stacktrace
