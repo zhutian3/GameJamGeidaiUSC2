@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class ZoomablePanel : MonoBehaviour
 {
@@ -21,10 +23,7 @@ public class ZoomablePanel : MonoBehaviour
     float lastRightClickTime = 0f;
     float doubleClickThreshold = 0.3f;
 
-    // Flag to block generic zoom when hotspot claims the double-click
     bool hotspotClaimedDoubleClick = false;
-
-    // Flag to prevent input during transitions
     bool isTransitioning = false;
 
     void Awake()
@@ -49,18 +48,39 @@ public class ZoomablePanel : MonoBehaviour
 
     void LateUpdate()
     {
-        // Reset the flag at end of frame so next frame starts fresh
         hotspotClaimedDoubleClick = false;
+    }
+
+    bool IsPointerOverUIElement()
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            SeamlessHotspot hotspot = result.gameObject.GetComponent<SeamlessHotspot>();
+            if (hotspot != null)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void HandleMouse()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (IsPointerOverUIElement())
+            {
+                return;
+            }
+
             float t = Time.time - lastLeftClickTime;
             if (t <= doubleClickThreshold && t > 0f)
             {
-                // Only do generic zoom if hotspot didn't claim this double-click
                 if (!hotspotClaimedDoubleClick)
                 {
                     ZoomIn();
@@ -91,7 +111,6 @@ public class ZoomablePanel : MonoBehaviour
 
     void AnimateZoom()
     {
-        // Animate scale
         if (!Mathf.Approximately(currentZoom, targetZoom))
         {
             currentZoom = Mathf.Lerp(currentZoom, targetZoom, Time.deltaTime * zoomSmoothSpeed);
@@ -104,7 +123,6 @@ public class ZoomablePanel : MonoBehaviour
             rect.localScale = Vector3.one * currentZoom;
         }
 
-        // Animate position
         if (Vector2.Distance(currentAnchoredPosition, targetAnchoredPosition) > 0.01f)
         {
             currentAnchoredPosition = Vector2.Lerp(currentAnchoredPosition, targetAnchoredPosition, Time.deltaTime * zoomSmoothSpeed);
@@ -129,7 +147,6 @@ public class ZoomablePanel : MonoBehaviour
         if (targetZoom <= minZoom) return;
         targetZoom = Mathf.Max(targetZoom / zoomStep, minZoom);
 
-        // When zooming out, ease position back toward center proportionally
         float zoomRatio = targetZoom / Mathf.Max(currentZoom, 0.001f);
         targetAnchoredPosition *= zoomRatio;
     }
@@ -159,25 +176,16 @@ public class ZoomablePanel : MonoBehaviour
         isTransitioning = false;
     }
 
-    /// <summary>
-    /// Called by SeamlessHotspot to claim the double-click so we don't do generic zoom.
-    /// </summary>
     public void ClaimDoubleClick()
     {
         hotspotClaimedDoubleClick = true;
     }
 
-    /// <summary>
-    /// Called by PanelManager to lock input during animated transitions.
-    /// </summary>
     public void SetTransitioning(bool value)
     {
         isTransitioning = value;
     }
 
-    /// <summary>
-    /// Returns the RectTransform for external animation.
-    /// </summary>
     public RectTransform GetRectTransform()
     {
         if (rect == null) rect = GetComponent<RectTransform>();

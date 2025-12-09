@@ -75,14 +75,25 @@ public class SeamlessHotspot : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log("=== CLICK RECEIVED on " + gameObject.name + " ===");
+
         if (eventData.button != PointerEventData.InputButton.Left)
+        {
+            Debug.Log("Not left click, ignoring");
             return;
+        }
 
         if (PanelManager.Instance == null)
+        {
+            Debug.LogError("PanelManager.Instance is NULL!");
             return;
+        }
 
         if (PanelManager.Instance.currentPanel != myPanel)
+        {
+            Debug.Log("Current panel is " + PanelManager.Instance.currentPanel.name + ", but myPanel is " + myPanel.name + " - ignoring click");
             return;
+        }
 
         if (requiredZoom > 0f && myPanel.GetZoom() < requiredZoom)
         {
@@ -91,17 +102,24 @@ public class SeamlessHotspot : MonoBehaviour, IPointerClickHandler
         }
 
         float timeSinceLastClick = Time.time - lastClickTime;
+        Debug.Log("Time since last click: " + timeSinceLastClick);
+
         bool isDoubleClick = (timeSinceLastClick <= doubleClickThreshold) && (timeSinceLastClick > 0f);
         lastClickTime = Time.time;
 
         if (isDoubleClick)
         {
+            Debug.Log("DOUBLE CLICK DETECTED! Starting seamless transition!");
             myPanel.ClaimDoubleClick();
 
             if (targetPanel != null)
             {
                 PanelManager.Instance.PlaySeamlessTransition(myPanel, targetPanel, rect);
             }
+        }
+        else
+        {
+            Debug.Log("Single click - waiting for second click...");
         }
     }
 

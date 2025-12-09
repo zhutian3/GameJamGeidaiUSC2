@@ -150,8 +150,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PanelManager
   currentPanel: {fileID: 329694607}
   seamlessZoomDuration: 0.8
-  autoZoomScale: 2
-  autoZoomDuration: 0.5
+  autoZoomScale: 3
+  autoZoomDuration: 0.8
 --- !u!4 &138196032
 Transform:
   m_ObjectHideFlags: 0
