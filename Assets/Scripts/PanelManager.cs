@@ -184,6 +184,12 @@ public class PanelManager : MonoBehaviour
         if (currentPanel != null) StartCoroutine(AutoZoom(currentPanel, toPanel));
     }
 
+    // Backwards compatibility - same as SwitchWithAutoZoom
+    public void PlaySeamlessTransition(ZoomablePanel fromPanel, ZoomablePanel toPanel, RectTransform hotspotRect = null)
+    {
+        StartCoroutine(AutoZoom(fromPanel, toPanel));
+    }
+
     IEnumerator AutoZoom(ZoomablePanel from, ZoomablePanel to)
     {
         from.SetTransitioning(true);
